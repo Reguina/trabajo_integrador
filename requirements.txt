@@ -1,0 +1,12 @@
+# IMPORTANTE: scikit-learn tiene que ser exactamente la misma versión con la que se entrenó
+# el modelo en Colab. Para verla, ejecutar en Colab:  import sklearn; print(sklearn.__version__)
+# y reemplazar el número de abajo.
+scikit-learn==1.6.1
+
+streamlit
+pandas
+numpy
+joblib
+scipy
+matplotlib
+seaborn

@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "algoritmo": "Gradient Boosting",
+  "fecha_entrenamiento": "2026-11-21 22:29",
+  "hiperparametros": {
+    "learning_rate": 0.03933964846554668,
+    "max_depth": 4.0,
+    "min_samples_leaf": 169.0,
+    "n_estimators": 357.0,
+    "subsample": 0.8887995089067299
+  },
+  "columnas_entrada": [
+    "CreditScore",
+    "Geography",
+    "Gender",
+    "Age",
+    "Tenure",
+    "Balance",
+    "NumOfProducts",
+    "HasCrCard",
+    "IsActiveMember",
+    "EstimatedSalary"
+  ],
+  "capacidad_contacto": 0.2,
+  "umbral_contacto": 0.3829956287899421,
+  "metricas_evaluacion": {
+    "AUC": 0.890428725663821,
+    "Captura 20%": 0.6464501751034702,
+    "Acierto lista 20%": 0.6845920431557654
+  },
+  "intervalos_95": {
+    "AUC": [
+      0.885561600308301,
+      0.8947536237887712
+    ],
+    "Captura 20%": [
+      0.6359089539089308,
+      0.655654505189301
+    ],
+    "Acierto lista 20%": [
+      0.6705116318273769,
+      0.6990981119352663
+    ]
+  },
+  "clientes_entrenamiento": 118630,
+  "tasa_churn_entrenamiento": 0.21183511759251455
+}
