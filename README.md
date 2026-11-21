@@ -63,8 +63,8 @@ Se abre en el navegador, en `http://localhost:8501`.
 | Pestaña | Qué hace |
 |---|---|
 | Consultar un cliente | Formulario con los 10 datos del cliente. Devuelve la probabilidad de churn y si conviene contactarlo. |
-| Cargar un archivo | Recibe un CSV con muchos clientes y devuelve la lista ordenada de mayor a menor riesgo, para descargar. Omite y muestra los registros con datos inválidos. |
-| Bitácora | Muestra las predicciones registradas y permite descargar la bitácora completa. |
+| Cargar un archivo | Recibe un CSV con muchos clientes y devuelve las predicciones ordenadas de mayor a menor riesgo, para descargar. Omite los registros con datos inválidos e informa cuántos fueron. |
+| Bitácora | Muestra todas las predicciones registradas y permite descargar la bitácora. |
 
 Un cliente se marca para **contactar** cuando su probabilidad supera el umbral guardado en el `.json` del modelo (0,38), que corresponde a contactar aproximadamente al 20% de la cartera.
 
