@@ -1,4 +1,4 @@
-"""Aplicación de predicción de churn – Banco Andino.
+"""Aplicación de predicción de churn – Banco Berlin.
 
 Ejecutar localmente con:  streamlit run app.py
 """
@@ -12,7 +12,7 @@ import streamlit as st
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src'))
 from prediccion import cargar_modelo, leer_bitacora, predecir, validar  # noqa: E402
 
-# Traducción de lo que elige el usuario a los valores con los que se entrenó el modelo
+# Traducción de lo que elige el usuario a los valores con los que se entrenó el modelo porque originalmente esta en ingles
 PAISES = {'Francia': 'France', 'Alemania': 'Germany', 'España': 'Spain'}
 GENEROS = {'Mujer': 'Female', 'Hombre': 'Male'}
 SI_NO = {'Sí': 1, 'No': 0}
@@ -30,7 +30,7 @@ st.caption(f"Modelo versión {info['version']}")
 
 tab_cliente, tab_archivo, tab_bitacora = st.tabs(['Consultar un cliente', 'Cargar un archivo', 'Bitácora'])
 
-# ---------------------------------------------------------------- 1. Un cliente
+# 1. Un cliente
 with tab_cliente:
     with st.form('formulario'):  # solo predice al apretar el botón
         edad = st.number_input('Edad', min_value=18, max_value=100, value=38)
@@ -58,7 +58,7 @@ with tab_cliente:
         else:
             st.success('No es necesario contactarlo')
 
-# ---------------------------------------------------------------- 2. Un archivo
+# 2. Un archivo
 with tab_archivo:
     archivo = st.file_uploader('Archivo CSV con un cliente por fila', type='csv')
     if archivo is not None and st.button('Procesar archivo'):
@@ -77,7 +77,7 @@ with tab_archivo:
         st.download_button('Descargar predicciones', resultado.to_csv(index=False), 'predicciones.csv',
                            on_click='ignore')
 
-# ---------------------------------------------------------------- 3. Bitácora
+# 3. Bitácora
 with tab_bitacora:
     bitacora = leer_bitacora()
     st.write(f'Predicciones registradas: {len(bitacora)}')
