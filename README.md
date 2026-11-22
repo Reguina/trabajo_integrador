@@ -14,7 +14,7 @@ La carpeta src guarda el código que comparten la notebook y la aplicación. El 
 
 En la carpeta modelos está el modelo elegido, un Gradient Boosting, guardado en dos archivos: modelo_churn_v1.0.0.joblib, que contiene el pipeline completo junto con el modelo entrenado, y modelo_churn_v1.0.0.json, que registra la versión, los hiperparámetros, el umbral de contacto y las métricas obtenidas en la evaluación. Tambien se habia probado el random forest.
 
-La carpeta notebooks contiene la notebook Trabajo-practico-integrados.ipynb, donde se hace la limpieza de los datos, el análisis exploratorio, la construcción del pipeline, el entrenamiento de los modelos y la selección del modelo final.
+La carpeta notebooks contiene la notebook Trabajo_practico_integrador.ipynb, donde se hace la limpieza de los datos, el análisis exploratorio, la construcción del pipeline, el entrenamiento de los modelos y la selección del modelo final.
 
 En la carpeta data están el archivo produccion.csv, que es el lote de clientes que reservamos para simular la puesta en producción, y el archivo ejemplo_clientes.csv, un archivo chico para probar la aplicación. Por último, la carpeta bitacora es donde la aplicación guarda el registro de las predicciones.
 
@@ -55,3 +55,15 @@ Cada vez que la aplicación hace una predicción, ya sea de un cliente o de un a
 Guardamos los datos completos de cada cliente, y no solo un resumen, porque los necesitamos en el monitoreo para comparar a los clientes nuevos con los del entrenamiento.
 
 Hay un detalle a tener en cuenta: en Streamlit Community Cloud los archivos no se guardan de forma permanente, así que la bitácora se borra cada vez que la aplicación se reinicia. Por eso, después de procesar un archivo, conviene descargarla desde la pestaña Bitácora.
+
+El monitoreo
+
+Para simular la puesta en producción, procesamos en la aplicación publicada los 26.169 clientes del lote reservado y analizamos el resultado en la notebook. En el lote completo, el modelo rindió por debajo del intervalo de confianza que habíamos calculado en la evaluación (un AUC de 0,880, cuando el mínimo esperado era 0,886).
+
+Al analizar a los clientes en el orden en que llegaron, encontramos que el lote tiene dos partes. En los primeros 16.650 clientes, el modelo funciona igual que en la evaluación. En los últimos 9.519, el perfil de los clientes cambia (hay menos clientes con saldo 0 y el salario promedio es más bajo) y el modelo rinde peor. Todo indica que esa segunda parte corresponde a los 10.000 clientes reales del dataset original a partir del cual se generaron los datos sintéticos, y que el modelo nunca vio en el entrenamiento.
+
+Para detectar estos cambios usamos la prueba de Kolmogorov-Smirnov y el índice PSI, y propusimos un criterio de reentrenamiento que combina controles sobre los datos, sobre la operación y sobre el desempeño del modelo. Según ese criterio, el modelo debería reentrenarse incorporando clientes con el perfil de esa segunda parte.
+
+La interpretación
+
+Para entender qué aprendió el modelo usamos la importancia por permutación, que mide cuánto empeora el modelo cuando se mezclan al azar los valores de una variable. Las variables que más pesan son la cantidad de productos y la edad, seguidas por la actividad del cliente, el saldo y el país. En cambio, el score crediticio, el salario, la antigüedad y la tarjeta de crédito casi no influyen. También explicamos tres predicciones individuales, midiendo cuánto cambia la probabilidad de cada cliente cuando se reemplaza cada uno de sus datos por el valor típico de la cartera.
