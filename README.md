@@ -1,80 +1,57 @@
-# Predicción de churn bancario
+Predicción de churn bancario
 
-Trabajo práctico integrador – Implementación de modelos de aprendizaje automático (2026).
+Trabajo práctico integrador de la materia Implementación de modelos de aprendizaje automático (2026).
 
-Modelo que estima la probabilidad de que un cliente deje el banco, para que el equipo de Retención de Banco Berlin (organización ficticia) priorice a quién contactar cada mes.
+En este proyecto desarrollamos un modelo que estima la probabilidad de que un cliente deje el banco. La idea es que el equipo de Retención de Banco Berlin (una organización ficticia) pueda usarlo cada mes para decidir a qué clientes contactar primero, antes de que se vayan.
 
-**Aplicación publicada:** https://trabajointegrador-implementacion-uba.streamlit.app/
+La aplicación está publicada en https://trabajointegrador-implementacion-uba.streamlit.app/
 
-## Estructura del repositorio
+Qué hay en el repositorio
 
-```
-├── app.py                      Aplicación web (Streamlit)
-├── src/
-│   ├── features.py             Transformaciones del pipeline (punto 2)
-│   └── prediccion.py           Carga del modelo, predicción y bitácora (app y monitoreo)
-├── modelos/
-│   ├── modelo_churn_v1.0.0.joblib   Pipeline completo + modelo entrenado
-│   └── modelo_churn_v1.0.0.json     Versión, hiperparámetros, umbral y métricas offline
-├── notebooks/
-│   ├── Trabajo-practico-integrados.ipynb   Limpieza, análisis exploratorio, pipeline, seleccion modelo
-├── data/                       Datos (ver "Datos")
-├── bitacora/                   Bitácora de predicciones
-└── requirements.txt
-```
+El repositorio está organizado en varias carpetas. En la carpeta principal está el archivo app.py, que contiene la aplicación web hecha con Streamlit, y el archivo requirements.txt, con las librerías necesarias para ejecutarla.
 
-Datos
+La carpeta src guarda el código que comparten la notebook y la aplicación. El archivo features.py contiene las transformaciones del pipeline, es decir, la limpieza y la construcción de las variables que usa el modelo. El archivo prediccion.py se encarga de cargar el modelo, validar los datos de los clientes, hacer las predicciones y registrarlas en la bitácora.
 
-Conjunto Bank Churn Prediction de Kaggle (licencia CC0: Public Domain), con 175.028 clientes. El archivo original (bank-churn.csv, 37 MB) no está en el repositorio porque supera el límite de 25 MB de la página web de GitHub: se descarga desde el enlace.
+En la carpeta modelos está el modelo elegido, un Gradient Boosting, guardado en dos archivos: modelo_churn_v1.0.0.joblib, que contiene el pipeline completo junto con el modelo entrenado, y modelo_churn_v1.0.0.json, que registra la versión, los hiperparámetros, el umbral de contacto y las métricas obtenidas en la evaluación. Tambien se habia probado el random forest.
 
-La notebook genera tres archivos a partir de él:
+La carpeta notebooks contiene la notebook Trabajo-practico-integrados.ipynb, donde se hace la limpieza de los datos, el análisis exploratorio, la construcción del pipeline, el entrenamiento de los modelos y la selección del modelo final.
 
-Archivo	Clientes	Uso	¿Está en el repositorio?
-data/train.csv	118.630 (68%)	Entrenamiento	No: se genera al ejecutar la notebook
-data/test.csv	29.658 (17%)	Evaluación offline	No: se genera al ejecutar la notebook
-data/produccion.csv	26.169 (15%)	Lote reservado para simular producción	Sí
-Cómo ejecutar cada parte
-1. Notebook (Google Colab)
-Abrir notebooks/Trabajo_practico_integrados.ipynb en Google Colab (Archivo → Subir notebook).
-Subir bank-churn.csv a la carpeta principal de Colab (/content/), que es desde donde lo lee la notebook.
-Entorno de ejecución → Ejecutar todo. 
-Al terminar, la notebook guarda el modelo en la carpeta modelos/ de Colab. Descargar los dos archivos y subirlos a modelos/ en el repositorio.
+En la carpeta data están el archivo produccion.csv, que es el lote de clientes que reservamos para simular la puesta en producción, y el archivo ejemplo_clientes.csv, un archivo chico para probar la aplicación. Por último, la carpeta bitacora es donde la aplicación guarda el registro de las predicciones.
 
-Versiones usadas: Python 3.13 y scikit-learn 1.6.1 (las de Colab al momento del entrenamiento). La versión de scikit-learn de requirements.txt tiene que coincidir con la del entrenamiento; si no, el modelo puede no cargar.
+Los datos
 
-2. Aplicación en una computadora local
-bash
-pip install -r requirements.txt
-streamlit run app.py
+Trabajamos con el conjunto Bank Churn Prediction de Kaggle (https://www.kaggle.com/datasets/willianoliveiragibin/bank-churn-prediction), que tiene información de 175.028 clientes y se publica con licencia CC0, es decir, de dominio público. El archivo original, bank-churn.csv, pesa 37 MB y no lo incluimos en el repositorio porque supera el límite de 25 MB que permite la página web de GitHub, pero se puede descargar desde ese enlace.
 
-Se abre en el navegador, en http://localhost:8501.
+A partir de ese archivo, la notebook separa a los clientes en tres grupos. El primero, con 118.630 clientes (el 68% del total), se usa para entrenar los modelos. El segundo, con 29.658 clientes (el 17%), se usa para evaluarlos y elegir el mejor. El tercero, con 26.169 clientes (el 15% restante), se reserva desde el principio para simular a los clientes nuevos que llegarían una vez publicado el modelo. 
 
-3. Aplicación publicada (Streamlit Community Cloud)
-Entrar a share.streamlit.io con la cuenta de GitHub.
-Create app → elegir este repositorio, la rama main y el archivo app.py.
-En Advanced settings, elegir Python 3.13.
-Deploy. Cada cambio que se sube al repositorio actualiza la app automáticamente.
-La aplicación
-Pestaña	Qué hace
-Consultar un cliente	Formulario con los 10 datos del cliente. Devuelve la probabilidad de churn y si conviene contactarlo.
-Cargar un archivo	Recibe un CSV con muchos clientes y devuelve las predicciones ordenadas de mayor a menor riesgo, para descargar. Omite los registros con datos inválidos e informa cuántos fueron. Para probarla, usar data/ejemplo_clientes.csv.
-Bitácora	Muestra todas las predicciones registradas y permite descargar la bitácora.
+Cómo ejecutar el proyecto
+La notebook
 
-El archivo que se carga tiene que tener estas columnas (puede tener otras, que se conservan en el resultado): CreditScore, Geography, Gender, Age, Tenure, Balance, NumOfProducts, HasCrCard, IsActiveMember, EstimatedSalary. Geography acepta France, Germany o Spain; Gender, Female o Male.
+La notebook está pensada para ejecutarse en Google Colab. Para hacerlo, hay que entrar a Colab, subir la notebook desde el menú Archivo --> Subir notebook y subir también el archivo bank-churn.csv a la carpeta principal de Colab (/content/), que es donde la notebook lo busca. Después alcanza con ir a Entorno de ejecución --> Ejecutar todo. Al terminar, la notebook guarda el modelo en la carpeta modelos de Colab, y esos dos archivos son los que hay que subir a la carpeta modelos del repositorio.
 
-Un cliente se marca para contactar cuando su probabilidad es mayor o igual al umbral guardado en el .json del modelo (0,38), que corresponde a contactar aproximadamente al 20% de la cartera.
+Entrenamos el modelo con Python 3.13 y scikit-learn 1.6.1, que eran las versiones de Colab en ese momento. Es importante que requirements.txt indique la misma versión de scikit-learn, porque un modelo guardado con una versión puede no abrir con otra.
 
-Bitácora
 
-Cada predicción, individual o por archivo, agrega una fila a bitacora/bitacora.csv con:
+La aplicación publicada
 
-Columna	Contenido
-fecha_hora	Fecha y hora de la predicción
-version_modelo	Versión del modelo que la hizo
-origen	app (consulta individual) o archivo: <nombre>
-id_ejecucion	Identifica a todas las predicciones de una misma consulta o archivo
-10 columnas de entrada	Datos del cliente tal como se recibieron
-probabilidad_churn, contactar	Predicción
-tiempo_ms_por_cliente, tiempo_ms_ejecucion, clientes_en_ejecucion	Tiempo de ejecución
+La publicamos de forma gratuita en Streamlit Community Cloud. Para hacerlo, hay que entrar a share.streamlit.io con la cuenta de GitHub, elegir Create app, seleccionar este repositorio, la rama main y el archivo app.py, y en Advanced settings elegir Python 3.13. Después de hacer clic en Deploy, la aplicación queda en línea, y cada cambio que se sube al repositorio la actualiza automáticamente.
 
-Se guardan los datos de entrada completos para poder analizar desvíos en el monitoreo. En Streamlit Community Cloud el almacenamiento no es permanente: la bitácora se borra cuando la app se reinicia, por lo que hay que descargarla desde la pestaña Bitácora después de procesar un archivo.
+Cómo se usa la aplicación
+
+La aplicación tiene tres pestañas. En la primera, Consultar un cliente, se cargan los diez datos de un cliente en un formulario y la aplicación muestra su probabilidad de dejar el banco y si conviene contactarlo.
+
+En la segunda, Cargar un archivo, se sube un archivo CSV con muchos clientes y la aplicación devuelve las predicciones de todos, ordenadas de mayor a menor riesgo y listas para descargar. Si algún cliente tiene datos inválidos, por ejemplo una edad imposible o un país que el modelo no conoce, la aplicación lo deja afuera y avisa cuántos fueron. Para probar esta pestaña se puede usar el archivo data/ejemplo_clientes.csv.
+
+El archivo que se sube tiene que incluir las columnas CreditScore, Geography, Gender, Age, Tenure, Balance, NumOfProducts, HasCrCard, IsActiveMember y EstimatedSalary. En Geography se acepta France, Germany o Spain, y en Gender, Female o Male. Si el archivo tiene otras columnas, como un número de cliente, se conservan en el resultado.
+
+En la tercera pestaña, Bitácora, se pueden ver todas las predicciones que se hicieron y descargarlas.
+
+La aplicación recomienda contactar a un cliente cuando su probabilidad de irse es del 38% o más. Elegimos ese umbral porque, con él, se contacta aproximadamente al 20% de la cartera, que es la capacidad que suponemos que tiene el equipo de Retención. El valor está guardado en el archivo .json del modelo, así que si en el futuro se reentrena, el nuevo modelo trae su propio umbral.
+
+La bitácora
+
+Cada vez que la aplicación hace una predicción, ya sea de un cliente o de un archivo completo, agrega una fila por cliente al archivo bitacora/bitacora.csv. En cada fila queda registrado cuándo se hizo la predicción, qué versión del modelo la hizo y si vino del formulario o de un archivo, junto con un código que agrupa todas las predicciones de una misma consulta o archivo. También se guardan los diez datos del cliente tal como llegaron a la aplicación, la probabilidad que calculó el modelo, la recomendación de contactarlo o no y cuánto tiempo tardó la predicción.
+
+Guardamos los datos completos de cada cliente, y no solo un resumen, porque los necesitamos en el monitoreo para comparar a los clientes nuevos con los del entrenamiento.
+
+Hay un detalle a tener en cuenta: en Streamlit Community Cloud los archivos no se guardan de forma permanente, así que la bitácora se borra cada vez que la aplicación se reinicia. Por eso, después de procesar un archivo, conviene descargarla desde la pestaña Bitácora.
